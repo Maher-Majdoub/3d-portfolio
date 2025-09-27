@@ -1,5 +1,6 @@
-import './style.css';
+import { App } from "./core/App";
+import "./style.css";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>Hello World</div>
-`;
+const app = new App();
+
+app.start();
