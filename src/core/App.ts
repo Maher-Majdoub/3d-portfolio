@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { Character } from "./world/Character";
+import type { Physics } from "./world/Physics";
 
 export class App {
   private _scene: THREE.Scene;
@@ -10,10 +12,14 @@ export class App {
   private _cameraFar = 1000;
 
   private _renderer: THREE.WebGLRenderer;
+  private _character: Character;
+
+  private _physics: Physics;
 
   private _isRunning = false;
 
-  constructor() {
+  constructor(physics: Physics) {
+    this._physics = physics;
     this._scene = new THREE.Scene();
 
     this._camera = new THREE.PerspectiveCamera(
@@ -23,16 +29,20 @@ export class App {
       this._cameraFar
     );
 
-    this._camera.position.z = 5;
+    this._camera.position.z = 10;
+    this._camera.position.y = 5;
 
     this._renderer = new THREE.WebGLRenderer({ antialias: true });
     this._renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    const geometry = new THREE.BoxGeometry();
-    const mesh = new THREE.MeshBasicMaterial({ color: "red" });
+    this._character = new Character(this._physics);
 
-    const cube = new THREE.Mesh(geometry, mesh);
-    this._scene.add(cube);
+    const groundGeometry = new THREE.BoxGeometry(1000, 1, 1000);
+    const groundMaterial = new THREE.MeshBasicMaterial({ color: "white" });
+    const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+
+    this._scene.add(this._character.mesh, groundMesh);
+    this._physics.add(groundMesh, "fixed");
 
     new OrbitControls(this._camera, this._renderer.domElement);
 
@@ -68,6 +78,8 @@ export class App {
   private _loop = () => {
     if (!this._isRunning) return;
 
+    this._physics.update();
+    this._character.update();
     this._renderer.render(this._scene, this._camera);
     requestAnimationFrame(this._loop);
   };
