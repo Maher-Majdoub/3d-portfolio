@@ -2,8 +2,10 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { Character } from "./world/Character";
 import type { Physics } from "./world/Physics";
+import renderingLoopManager from "./managers/RenderingLoopManager";
+import type IUpdatable from "./interfaces/IUpdatable";
 
-export class App {
+export class App implements IUpdatable {
   private _scene: THREE.Scene;
 
   private _camera: THREE.PerspectiveCamera;
@@ -15,8 +17,6 @@ export class App {
   private _character: Character;
 
   private _physics: Physics;
-
-  private _isRunning = false;
 
   constructor(physics: Physics) {
     this._physics = physics;
@@ -50,15 +50,20 @@ export class App {
 
     document.body.append(this._renderer.domElement);
     window.addEventListener("resize", this._onWindowResize);
+
+    renderingLoopManager.subscribe(this);
   }
 
   start() {
-    this._isRunning = true;
-    this._loop();
+    renderingLoopManager.start();
   }
 
   stop() {
-    this._isRunning = false;
+    renderingLoopManager.stop();
+  }
+
+  update() {
+    this._renderer.render(this._scene, this._camera);
   }
 
   private _onWindowResize = () => {
@@ -73,14 +78,5 @@ export class App {
   private _updateCameraAspect = () => {
     this._camera.aspect = window.innerWidth / window.innerHeight;
     this._camera.updateProjectionMatrix();
-  };
-
-  private _loop = () => {
-    if (!this._isRunning) return;
-
-    this._physics.update();
-    this._character.update();
-    this._renderer.render(this._scene, this._camera);
-    requestAnimationFrame(this._loop);
   };
 }

@@ -33,8 +33,8 @@ export const CHARACTER_DIMENSIONS = {
 };
 
 export const CHARACTER_SPEED = {
-  WALK: 8,
-  RUN: 20,
+  WALK: 6,
+  RUN: 12,
   JUMP: 4,
-  ROTATION: 8,
+  ROTATION: 6,
 };

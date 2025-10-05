@@ -13,6 +13,8 @@ import {
   KEY_TO_ACTION_MAP,
 } from "../constants/character";
 import { FRICTION, GRAVITY } from "../constants/physics";
+import type IUpdatable from "../interfaces/IUpdatable";
+import renderingLoopManager from "../managers/RenderingLoopManager";
 
 interface MovementState {
   FORWARD: boolean;
@@ -23,7 +25,7 @@ interface MovementState {
   JUMP: boolean;
 }
 
-export class Character implements IKeyboardListener {
+export class Character implements IKeyboardListener, IUpdatable {
   readonly mesh: THREE.Mesh;
   private _collider: Collider;
   private _controller: KinematicCharacterController;
@@ -56,6 +58,7 @@ export class Character implements IKeyboardListener {
     this._controller = physics.createCharacterController(0.01);
 
     keyboardManager.subscribe(this, ALL_CHARACTER_CONTROL_KEYS, true);
+    renderingLoopManager.subscribe(this);
   }
 
   private _createCharacterMesh = (): THREE.Mesh => {
@@ -88,8 +91,7 @@ export class Character implements IKeyboardListener {
     }
   }
 
-  update() {
-    const delta = 0.01; // TODO: change this
+  update(delta: number) {
     const isGrounded = this._controller.computedGrounded();
 
     if (isGrounded) this._updateInputDirection();

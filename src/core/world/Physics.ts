@@ -1,10 +1,12 @@
 import type { RigidBody, World } from "@dimforge/rapier3d";
 import { Matrix4, Quaternion, Vector3, type Mesh } from "three";
 import { GRAVITY } from "../constants/physics";
+import type IUpdatable from "../interfaces/IUpdatable";
+import renderingLoopManager from "../managers/RenderingLoopManager";
 
 type Rapier = typeof import("@dimforge/rapier3d");
 
-export class Physics {
+export class Physics implements IUpdatable {
   private _rapier: Rapier;
   private _world: World;
 
@@ -15,6 +17,8 @@ export class Physics {
 
     const gravity = new this._rapier.Vector3(0, GRAVITY, 0);
     this._world = new this._rapier.World(gravity);
+
+    renderingLoopManager.subscribe(this);
   }
 
   add(mesh: Mesh, type: "fixed" | "dynamic") {
