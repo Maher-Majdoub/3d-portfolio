@@ -1,17 +1,28 @@
 import store from "../store/sotre";
+import assetsLoader from "./AssetsLoader";
 
 export class Preloader {
   private _loadingScreen: HTMLElement;
+  private _onLoadComplete: () => void;
 
-  constructor() {
+  constructor(onLoadComplete: () => void) {
     this._loadingScreen = this._createLoadingScreen();
+    this._onLoadComplete = onLoadComplete;
+  }
+
+  startLoading() {
+    if (store.getState().assets.status !== "pending") return;
 
     this._displayLoadingScreen();
 
-    store.subscribe(() => {
+    assetsLoader.startLoading();
+
+    const unsubcribe = store.subscribe(() => {
       const state = store.getState();
       if (state.assets.status === "ready") {
         this._removeLoadingScreen();
+        this._onLoadComplete();
+        unsubcribe();
       }
     });
   }
