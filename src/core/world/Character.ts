@@ -92,13 +92,17 @@ export class Character implements IKeyboardListener {
     const delta = 0.01; // TODO: change this
     const isGrounded = this._controller.computedGrounded();
 
-    this._updateVelocity(delta, isGrounded);
-
     if (isGrounded) this._updateInputDirection();
+
+    this._updateVelocity(delta, isGrounded);
 
     this._updateFameMovement(delta);
 
-    const isMoving = this._frameMovement.lengthSq() > 0.001;
+    const dirX = Math.abs(this._frameMovement.x);
+    const dirZ = Math.abs(this._frameMovement.z);
+    const len = Math.hypot(dirX, dirZ);
+
+    const isMoving = len > 0.0001;
     if (isMoving && isGrounded) this._applyRotationInfluence(delta);
 
     this._moveCharacter();
@@ -131,6 +135,10 @@ export class Character implements IKeyboardListener {
       this._movementState.JUMP = false;
     }
 
+    this._velocity.x += FRICTION * delta;
+    this._velocity.z += FRICTION * delta;
+    this._velocity.y += GRAVITY * delta * 2;
+
     if (isGrounded) {
       const speed = this._movementState.SPRINT
         ? CHARACTER_SPEED.RUN
@@ -140,15 +148,15 @@ export class Character implements IKeyboardListener {
       const dirZ = Math.abs(this._inputDirection.z);
       const len = Math.hypot(dirX, dirZ);
 
-      this._velocity.x = (dirX / len) * speed;
-      this._velocity.z = (dirZ / len) * speed;
+      if (len) {
+        this._velocity.x = (dirX / len) * speed;
+        this._velocity.z = (dirZ / len) * speed;
+      } else {
+        this._velocity.x = 0;
+        this._velocity.z = 0;
+      }
 
       this._velocity.y = Math.max(0, this._velocity.y);
-    } else {
-      this._velocity.x += FRICTION * delta;
-      this._velocity.z += FRICTION * delta;
-
-      this._velocity.y += GRAVITY * delta;
     }
 
     this._velocity.x = Math.max(this._velocity.x, 0);
