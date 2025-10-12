@@ -13,8 +13,10 @@ import {
   KEY_TO_ACTION_MAP,
 } from "../constants/character";
 import { FRICTION, GRAVITY } from "../constants/physics";
+import { assetsMap } from "../store/assetsSlice";
 import type IUpdatable from "../interfaces/IUpdatable";
 import renderingLoopManager from "../managers/RenderingLoopManager";
+import AnimationManager from "../managers/AnimationManager";
 
 interface MovementState {
   FORWARD: boolean;
@@ -45,17 +47,32 @@ export class Character implements IKeyboardListener, IUpdatable {
   private _targetQuaternion = new THREE.Quaternion();
   private _targetQuaternionEuler = new THREE.Euler(0, 0, 0, "YXZ");
 
+  private _animationManager: AnimationManager;
+
   constructor(physics: Physics) {
     this.mesh = this._createCharacterMesh();
     this.mesh.position.y = 2;
+
+    const avatar = assetsMap.get("avatar")!;
+    avatar.scene.translateY(-CHARACTER_DIMENSIONS.HEIGHT / 2);
+
+    this.mesh.add(avatar.scene);
 
     const { collider } = physics.createCollider(
       this.mesh,
       this.mesh.getWorldPosition(new THREE.Vector3()),
       this.mesh.getWorldQuaternion(new THREE.Quaternion())
     );
+
     this._collider = collider;
     this._controller = physics.createCharacterController(0.01);
+
+    this._animationManager = new AnimationManager(
+      avatar.scene,
+      avatar.animations
+    );
+
+    this._animationManager.playAnimation("idle");
 
     keyboardManager.subscribe(this, ALL_CHARACTER_CONTROL_KEYS, true);
     renderingLoopManager.subscribe(this);

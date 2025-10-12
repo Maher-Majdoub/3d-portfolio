@@ -11,7 +11,10 @@ export class Preloader {
   }
 
   startLoading() {
-    if (store.getState().assets.status !== "pending") return;
+    if (store.getState().assets.status !== "pending") {
+      this._onLoadComplete();
+      return;
+    }
 
     this._displayLoadingScreen();
 

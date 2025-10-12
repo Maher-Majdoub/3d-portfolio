@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { GLTF } from "three/examples/jsm/Addons.js";
 
 export type AssetType = "gltf";
 
@@ -15,10 +16,10 @@ interface AssetsState {
 }
 
 export const assetsToLoad: IAsset[] = [
-  // { id: "scene", type: "gltf", path: "/models/scene.glb" },
+  { id: "avatar", type: "gltf", path: "/models/avatar.glb" },
 ];
 
-export const assetsMap = new Map<string, any>();
+export const assetsMap = new Map<string, GLTF>();
 
 const initialState: AssetsState = {
   status: assetsToLoad.length ? "pending" : "ready",

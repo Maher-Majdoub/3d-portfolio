@@ -41,7 +41,9 @@ export class App implements IUpdatable {
     const groundMaterial = new THREE.MeshBasicMaterial({ color: "white" });
     const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
 
-    this._scene.add(this._character.mesh, groundMesh);
+    const ambientLight = new THREE.AmbientLight();
+
+    this._scene.add(this._character.mesh, groundMesh, ambientLight);
     this._physics.add(groundMesh, "fixed");
 
     new OrbitControls(this._camera, this._renderer.domElement);
