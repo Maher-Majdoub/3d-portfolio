@@ -1,2 +1,2 @@
 export const GRAVITY = -9.81;
-export const FRICTION = -10;
+export const FRICTION = -4;

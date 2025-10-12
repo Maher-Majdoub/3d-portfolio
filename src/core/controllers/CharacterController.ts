@@ -95,6 +95,14 @@ export default class CharacterController
     if (isMoving && isGrounded) this._applyRotationInfluence(delta);
 
     this._moveCharacter();
+
+    let animation = !isMoving
+      ? "idle"
+      : this._movementState.SPRINT
+      ? "run"
+      : "walk";
+
+    this._animationManager.playAnimation(animation);
   }
 
   private _handleKeyEvent(keyCode: string, isPressed: boolean): void {
