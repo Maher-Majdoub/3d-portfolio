@@ -6,9 +6,12 @@ import {
   type AssetType,
 } from "../store/assetsSlice";
 import store from "../store/sotre";
+import { Physics } from "../world/Physics";
+import { Mesh } from "three";
 
 class AssetsLoader {
   private _gltfLoader;
+  physics: Physics | null = null;
 
   constructor() {
     const dracoLoader = new DRACOLoader();
@@ -18,12 +21,25 @@ class AssetsLoader {
     this._gltfLoader.setDRACOLoader(dracoLoader);
   }
 
-  startLoading() {
+  async startLoading() {
+    const rapier = await import("@dimforge/rapier3d");
+    const physics = new Physics(rapier);
+    this.physics = physics;
+
     assetsToLoad.forEach(({ id, type, path }) => {
       const loader = this._getLoader(type);
 
       loader.load(path, (loadedAsset) => {
         assetsMap.set(id, loadedAsset);
+
+        loadedAsset.scene.children.forEach((child) => {
+          if (child.name.includes("static")) {
+            child.traverse((object) => {
+              if (object instanceof Mesh) physics.add(object, "fixed");
+            });
+          }
+        });
+
         store.dispatch(onLoadAsset({ id }));
       });
     });

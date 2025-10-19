@@ -1,9 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { Character } from "./world/Character";
+import { assetsMap } from "./store/assetsSlice";
 import type { Physics } from "./world/Physics";
-import renderingLoopManager from "./managers/RenderingLoopManager";
 import type IUpdatable from "./interfaces/IUpdatable";
+import renderingLoopManager from "./managers/RenderingLoopManager";
 
 export class App implements IUpdatable {
   private _scene: THREE.Scene;
@@ -37,14 +38,16 @@ export class App implements IUpdatable {
 
     this._character = new Character(this._physics);
 
-    const groundGeometry = new THREE.BoxGeometry(1000, 1, 1000);
-    const groundMaterial = new THREE.MeshBasicMaterial({ color: "white" });
-    const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+    // const groundGeometry = new THREE.BoxGeometry(1000, 1, 1000);
+    // const groundMaterial = new THREE.MeshBasicMaterial({ color: "white" });
+    // const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
 
     const ambientLight = new THREE.AmbientLight();
 
-    this._scene.add(this._character.mesh, groundMesh, ambientLight);
-    this._physics.add(groundMesh, "fixed");
+    const environment = assetsMap.get("environment")!;
+
+    this._scene.add(this._character.mesh, ambientLight, environment.scene);
+    // this._physics.add(groundMesh, "fixed");
 
     new OrbitControls(this._camera, this._renderer.domElement);
 

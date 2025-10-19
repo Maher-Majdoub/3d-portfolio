@@ -17,6 +17,7 @@ interface AssetsState {
 
 export const assetsToLoad: IAsset[] = [
   { id: "avatar", type: "gltf", path: "/models/avatar.glb" },
+  { id: "environment", type: "gltf", path: "/models/environment.glb" },
 ];
 
 export const assetsMap = new Map<string, GLTF>();
