@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { Character } from "./world/Character";
 import { assetsMap } from "./store/assetsSlice";
+import { PointerLockOverlay } from "./utils/PointerLockOverlay";
 import type { Physics } from "./world/Physics";
 import type IUpdatable from "./interfaces/IUpdatable";
 import renderingLoopManager from "./managers/RenderingLoopManager";
@@ -36,36 +36,29 @@ export class App implements IUpdatable {
     this._renderer = new THREE.WebGLRenderer({ antialias: true });
     this._renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    this._character = new Character(this._physics);
-
-    // const groundGeometry = new THREE.BoxGeometry(1000, 1, 1000);
-    // const groundMaterial = new THREE.MeshBasicMaterial({ color: "white" });
-    // const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+    this._character = new Character(this._physics, this._camera);
 
     const ambientLight = new THREE.AmbientLight();
-
     const environment = assetsMap.get("environment")!;
 
     this._scene.add(this._character.mesh, ambientLight, environment.scene);
-    // this._physics.add(groundMesh, "fixed");
-
-    new OrbitControls(this._camera, this._renderer.domElement);
 
     this._updateRendererSize();
 
     document.body.append(this._renderer.domElement);
     window.addEventListener("resize", this._onWindowResize);
 
+    new PointerLockOverlay(this._renderer.domElement, this.start, this.stop);
     renderingLoopManager.subscribe(this);
   }
 
-  start() {
+  start = () => {
     renderingLoopManager.start();
-  }
+  };
 
-  stop() {
+  stop = () => {
     renderingLoopManager.stop();
-  }
+  };
 
   update() {
     this._renderer.render(this._scene, this._camera);

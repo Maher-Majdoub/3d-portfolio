@@ -7,7 +7,7 @@ import type { Physics } from "./Physics";
 export class Character {
   readonly mesh: THREE.Mesh;
 
-  constructor(physics: Physics) {
+  constructor(physics: Physics, camera: THREE.Camera) {
     this.mesh = this._createCharacterMesh();
     this.mesh.position.y = 2;
 
@@ -15,7 +15,7 @@ export class Character {
     avatar.scene.translateY(-CHARACTER_DIMENSIONS.HEIGHT / 2);
 
     this.mesh.add(avatar.scene);
-    new CharacterController(physics, this.mesh, avatar);
+    new CharacterController(physics, this.mesh, avatar, camera);
   }
 
   private _createCharacterMesh = (): THREE.Mesh => {

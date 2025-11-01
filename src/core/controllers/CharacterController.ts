@@ -1,4 +1,4 @@
-import { Euler, Quaternion, Vector3, type Mesh } from "three";
+import { Camera, Euler, Quaternion, Vector3, type Mesh } from "three";
 import {
   ALL_CHARACTER_CONTROL_KEYS,
   CHARACTER_SPEED,
@@ -26,6 +26,10 @@ interface MovementState {
   JUMP: boolean;
 }
 
+const CAMERA_DISTANCE = 4;
+const CAMERA_HEIGHT = 0.5;
+const CAMERA_SMOOTHNESS = 0.1;
+
 export default class CharacterController
   implements IKeyboardListener, IUpdatable
 {
@@ -48,8 +52,20 @@ export default class CharacterController
   private _velocity = new Vector3();
   private _targetQuaternion = new Quaternion();
   private _targetQuaternionEuler = new Euler(0, 0, 0, "YXZ");
+  private _rotationAxis = new Vector3(0, 1, 0);
 
-  constructor(physics: Physics, mesh: Mesh, avatar: GLTF) {
+  private _camera: Camera;
+
+  private _yaw = 0;
+  private _yawQuat = new Quaternion();
+  private _pitch = 0;
+  private _maxPitch = 0.29;
+  private _minPitch = -0.9;
+  private _mouseSensitivity = 0.001;
+
+  constructor(physics: Physics, mesh: Mesh, avatar: GLTF, camera: Camera) {
+    this._camera = camera;
+
     const { collider } = physics.createCollider(
       mesh,
       mesh.getWorldPosition(new Vector3()),
@@ -66,9 +82,18 @@ export default class CharacterController
 
     this._animationManager.playAnimation("idle");
 
+    window.addEventListener("mousemove", this._handleMouseMove);
+
     keyboardManager.subscribe(this, ALL_CHARACTER_CONTROL_KEYS, true);
     renderingLoopManager.subscribe(this);
   }
+
+  private _handleMouseMove = (ev: MouseEvent) => {
+    this._yaw -= ev.movementX * this._mouseSensitivity;
+
+    const newPitch = this._pitch - ev.movementY * this._mouseSensitivity;
+    this._pitch = Math.max(this._minPitch, Math.min(this._maxPitch, newPitch));
+  };
 
   onKeyDown(keyCode: string): void {
     this._handleKeyEvent(keyCode, true);
@@ -79,6 +104,8 @@ export default class CharacterController
   }
 
   update(delta: number): void {
+    this._updateCamera(delta);
+
     const isGrounded = this._controller.computedGrounded();
 
     if (isGrounded) this._updateInputDirection();
@@ -130,6 +157,7 @@ export default class CharacterController
       this._collider,
       this._frameMovement
     );
+
     this._frameMovement.copy(this._controller.computedMovement());
   }
 
@@ -168,21 +196,31 @@ export default class CharacterController
   }
 
   private _applyRotationInfluence(delta: number) {
+    if (this._frameMovement.lengthSq() < 1e-6) return;
+
     const targetAngle = Math.atan2(
       this._frameMovement.x,
       this._frameMovement.z
     );
 
-    this._targetQuaternionEuler.y = targetAngle;
-
+    this._targetQuaternionEuler.set(0, targetAngle, 0);
     this._targetQuaternion.setFromEuler(this._targetQuaternionEuler);
+
+    this._yawQuat.setFromAxisAngle(this._rotationAxis, this._yaw);
+    this._targetQuaternion.premultiply(this._yawQuat);
+
+    // facing the camera direction
+    this._frameMovement.applyQuaternion(this._yawQuat);
+
     const angleDifference = this._mesh.quaternion.angleTo(
       this._targetQuaternion
     );
 
     const rotationFactor = Math.max(0, 1 - angleDifference / (Math.PI / 2));
 
+    // slowing down when rotating
     this._frameMovement.multiplyScalar(rotationFactor);
+
     this._mesh.quaternion.slerp(
       this._targetQuaternion,
       CHARACTER_SPEED.ROTATION * delta
@@ -197,5 +235,25 @@ export default class CharacterController
       z: currentTranslation.z + this._frameMovement.z,
     });
     this._mesh.position.copy(this._collider.translation());
+  }
+
+  private _updateCamera(delta: number) {
+    const cameraTargetOffset = new Vector3(0, CAMERA_HEIGHT, CAMERA_DISTANCE);
+
+    const cameraRotation = new Euler(this._pitch, this._yaw, 0, "YXZ");
+    cameraTargetOffset.applyEuler(cameraRotation);
+
+    const desiredCameraPos = this._mesh.position
+      .clone()
+      .add(cameraTargetOffset);
+
+    this._camera.position.lerp(
+      desiredCameraPos,
+      1 - Math.pow(1 - CAMERA_SMOOTHNESS, delta * 60)
+    );
+
+    this._camera.lookAt(
+      this._mesh.position.clone().add(new Vector3(0, CAMERA_HEIGHT, 0))
+    );
   }
 }

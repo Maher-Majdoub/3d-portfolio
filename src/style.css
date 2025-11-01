@@ -4,7 +4,7 @@ body {
   box-sizing: border-box;
 }
 
-.preloader-container {
+.overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -15,4 +15,8 @@ body {
   color: white;
   display: grid;
   place-items: center;
+}
+
+.hidden {
+  opacity: 0;
 }

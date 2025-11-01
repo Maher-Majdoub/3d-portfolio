@@ -32,7 +32,7 @@ export class Preloader {
 
   private _createLoadingScreen(): HTMLElement {
     const htmlString = `
-      <div class="preloader-container" >
+      <div class="overlay" >
         <p>Loading Resources...</p>
       </div>
     `;
