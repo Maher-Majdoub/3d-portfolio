@@ -45,7 +45,7 @@ class KeyboardManager {
     this._pressedKeys.delete(keyCode);
 
     this._listeners.forEach((keysObj, listener) => {
-      if (keysObj.upKeys.has(keyCode)) listener.onKeyUp(keyCode);
+      if (keysObj.upKeys.has(keyCode)) listener.onKeyUp?.(keyCode);
     });
   };
 }

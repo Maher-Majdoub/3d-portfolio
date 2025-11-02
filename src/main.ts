@@ -4,8 +4,7 @@ import assetsLoader from "./core/utils/AssetsLoader";
 import "./style.css";
 
 const onAssetsLoaded = () => {
-  const app = new App(assetsLoader.physics!);
-  app.start();
+  new App(assetsLoader.physics!);
 };
 
 const run = async () => {

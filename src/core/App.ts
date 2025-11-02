@@ -1,10 +1,12 @@
 import * as THREE from "three";
+import { Computer } from "./world/computer/Computer";
 import { Character } from "./world/Character";
 import { assetsMap } from "./store/assetsSlice";
 import { PointerLockOverlay } from "./utils/PointerLockOverlay";
+import { InteractionManager } from "./managers/InteractionManager";
+import renderingLoopManager from "./managers/RenderingLoopManager";
 import type { Physics } from "./world/Physics";
 import type IUpdatable from "./interfaces/IUpdatable";
-import renderingLoopManager from "./managers/RenderingLoopManager";
 
 export class App implements IUpdatable {
   private _scene: THREE.Scene;
@@ -18,6 +20,8 @@ export class App implements IUpdatable {
   private _character: Character;
 
   private _physics: Physics;
+
+  private _computerObjects: THREE.Object3D[] = [];
 
   constructor(physics: Physics) {
     this._physics = physics;
@@ -41,7 +45,16 @@ export class App implements IUpdatable {
     const ambientLight = new THREE.AmbientLight();
     const environment = assetsMap.get("environment")!;
 
+    environment.scene.traverse((child) => {
+      if (child.name && child.name.startsWith("computer")) {
+        this._computerObjects.push(child);
+      }
+    });
+
     this._scene.add(this._character.mesh, ambientLight, environment.scene);
+
+    const computer = new Computer(this._computerObjects);
+    new InteractionManager(this._camera, [computer]);
 
     this._updateRendererSize();
 
