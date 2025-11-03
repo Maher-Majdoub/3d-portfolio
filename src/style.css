@@ -1,7 +1,14 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+
 body {
   padding: 0;
   margin: 0;
-  box-sizing: border-box;
 }
 
 .overlay {
@@ -25,7 +32,7 @@ body {
   padding: 0.6rem 1.2rem;
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 1rem;
   letter-spacing: 0.5px;
   border-radius: 8px;
@@ -35,19 +42,6 @@ body {
   transition: opacity 0.2s ease;
   user-select: none;
   z-index: 1000;
-}
-
-.computer-page-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 999;
-  background-color: black;
-  color: white;
-  display: grid;
-  place-items: center;
 }
 
 .visible {
