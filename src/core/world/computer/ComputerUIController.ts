@@ -1,6 +1,6 @@
 import computerPageHtml from "./static/computer.html?raw";
 import { formatDateTime } from "../../helpers/dateHelpers";
-
+import { ComputerApp } from "./ComputerApp";
 import "./static/computer.css";
 
 export class ComputerUIController {
@@ -26,6 +26,20 @@ export class ComputerUIController {
     this._updateTimeIntervalId = setInterval(() => {
       computerDateTime.textContent = formatDateTime();
     }, 1000);
+
+    const fileManagerAppElement = document.querySelector(
+      "#file-manager-app"
+    )! as HTMLElement;
+
+    fileManagerAppElement.addEventListener("click", () => {
+      const app = new ComputerApp();
+
+      const appDomElement = app.domElement;
+      if (appDomElement) {
+        const comptuerMainView = document.querySelector("#computer-main-view")!;
+        comptuerMainView.appendChild(appDomElement);
+      }
+    });
   }
 
   unmount() {
