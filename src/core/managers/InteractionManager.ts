@@ -1,9 +1,6 @@
 import * as THREE from "three";
-import renderingLoopManager from "./RenderingLoopManager";
-import keyboardManager from "./KeyboardManager";
-import type IUpdatable from "../interfaces/IUpdatable";
-import type IKeyboardListener from "../interfaces/IKeyboardListener";
-import type { IInteractable } from "../interfaces/IInteractable";
+import { renderingLoopManager, keyboardManager } from ".";
+import type { IInteractable, IKeyboardListener, IUpdatable } from "@interfaces";
 
 export class InteractionManager implements IUpdatable, IKeyboardListener {
   private _originElement: THREE.Object3D;

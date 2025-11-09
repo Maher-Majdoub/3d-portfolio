@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import CharacterController from "../controllers/CharacterController";
-import { CHARACTER_DIMENSIONS } from "../constants/character";
-import { assetsMap } from "../store/assetsSlice";
-import type { Physics } from "./Physics";
+import { CharacterController } from "@controllers";
+import { CHARACTER_DIMENSIONS } from "@constants/character";
+import { assetsMap } from "@store/assetsSlice";
+import type { Physics } from ".";
 
 export class Character {
   readonly mesh: THREE.Mesh;

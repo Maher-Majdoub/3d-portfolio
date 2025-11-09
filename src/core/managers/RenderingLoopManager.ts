@@ -1,5 +1,5 @@
 import { Clock } from "three";
-import type IUpdatable from "../interfaces/IUpdatable";
+import type { IUpdatable } from "@interfaces";
 
 class RenderingLoopManager {
   private _clock: Clock;
@@ -41,4 +41,4 @@ class RenderingLoopManager {
 }
 
 const renderingLoopManager = new RenderingLoopManager();
-export default renderingLoopManager;
+export { renderingLoopManager };

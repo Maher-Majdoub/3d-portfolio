@@ -1,8 +1,8 @@
 import type { RigidBody, World } from "@dimforge/rapier3d";
 import { Matrix4, Quaternion, Vector3, type Mesh } from "three";
-import { GRAVITY } from "../constants/physics";
-import type IUpdatable from "../interfaces/IUpdatable";
-import renderingLoopManager from "../managers/RenderingLoopManager";
+import { GRAVITY } from "@constants/physics";
+import type { IUpdatable } from "@interfaces";
+import { renderingLoopManager } from "@managers";
 
 type Rapier = typeof import("@dimforge/rapier3d");
 

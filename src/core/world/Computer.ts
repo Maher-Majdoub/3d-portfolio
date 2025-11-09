@@ -1,9 +1,7 @@
 import type { Object3D } from "three";
-import type { IInteractable } from "../../interfaces/IInteractable";
-import type IKeyboardListener from "../../interfaces/IKeyboardListener";
-import renderingLoopManager from "../../managers/RenderingLoopManager";
-import keyboardManager from "../../managers/KeyboardManager";
-import { ComputerUIController } from "./ComputerUIController";
+import type { IInteractable, IKeyboardListener } from "@interfaces";
+import { renderingLoopManager, keyboardManager } from "@managers";
+import { ComputerUIController } from "@interactables/computer";
 
 export class Computer implements IInteractable, IKeyboardListener {
   objects: Object3D[];

@@ -20,7 +20,21 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": false,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "baseUrl": "src",
+    "paths": {
+      "@core/*": ["core/*"],
+      "@world": ["core/world"],
+      "@managers": ["core/managers"],
+      "@controllers": ["core/controllers"],
+      "@interfaces": ["core/interfaces"],
+      "@utils": ["core/utils"],
+      "@constants/*": ["core/constants/*"],
+      "@interactables/*": ["core/interactables/*"],
+      "@store/*": ["core/store/*"],
+      "@helpers/*": ["core/helpers/*"],
+    }
   },
   "include": ["src"]
 }

@@ -1,12 +1,9 @@
 import * as THREE from "three";
-import { Computer } from "./world/computer/Computer";
-import { Character } from "./world/Character";
-import { assetsMap } from "./store/assetsSlice";
-import { PointerLockOverlay } from "./utils/PointerLockOverlay";
-import { InteractionManager } from "./managers/InteractionManager";
-import renderingLoopManager from "./managers/RenderingLoopManager";
-import type { Physics } from "./world/Physics";
-import type IUpdatable from "./interfaces/IUpdatable";
+import { Computer, Character, type Physics } from "@world";
+import { assetsMap } from "@store/assetsSlice";
+import { PointerLockOverlay } from "@utils";
+import { InteractionManager, renderingLoopManager } from "@managers";
+import type { IUpdatable } from "@interfaces";
 
 export class App implements IUpdatable {
   private _scene: THREE.Scene;

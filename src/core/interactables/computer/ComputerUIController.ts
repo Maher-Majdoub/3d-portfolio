@@ -1,5 +1,5 @@
 import computerPageHtml from "./static/computer.html?raw";
-import { formatDateTime } from "../../helpers/dateHelpers";
+import { formatDateTime } from "@helpers/dateHelpers";
 import { ComputerApp } from "./ComputerApp";
 import "./static/computer.css";
 

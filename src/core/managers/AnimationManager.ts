@@ -4,10 +4,10 @@ import {
   type AnimationClip,
   type Object3D,
 } from "three";
-import type IUpdatable from "../interfaces/IUpdatable";
-import renderingLoopManager from "./RenderingLoopManager";
+import type { IUpdatable } from "@interfaces";
+import { renderingLoopManager } from ".";
 
-export default class AnimationManager implements IUpdatable {
+export class AnimationManager implements IUpdatable {
   private _mixer: AnimationMixer;
   private _actions: Record<string, AnimationAction | undefined> = {};
   private _currentAction: AnimationAction | null = null;

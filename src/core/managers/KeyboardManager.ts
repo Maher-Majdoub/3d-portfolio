@@ -1,4 +1,4 @@
-import type IKeyboardListener from "../interfaces/IKeyboardListener";
+import type { IKeyboardListener } from "@interfaces";
 
 class KeyboardManager {
   private _listeners: Map<
@@ -51,4 +51,4 @@ class KeyboardManager {
 }
 
 const keyboardManager = new KeyboardManager();
-export default keyboardManager;
+export { keyboardManager };

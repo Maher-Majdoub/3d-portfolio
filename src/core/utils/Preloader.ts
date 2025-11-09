@@ -1,5 +1,5 @@
-import store from "../store/sotre";
-import assetsLoader from "./AssetsLoader";
+import store from "@store/store";
+import { assetsLoader } from ".";
 
 export class Preloader {
   private _loadingScreen: HTMLElement;

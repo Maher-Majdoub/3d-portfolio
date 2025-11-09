@@ -1,3 +1,3 @@
-export default interface IUpdatable {
+export interface IUpdatable {
   update(delta: number): void;
 }

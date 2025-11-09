@@ -4,9 +4,9 @@ import {
   assetsToLoad,
   onLoadAsset,
   type AssetType,
-} from "../store/assetsSlice";
-import store from "../store/sotre";
-import { Physics } from "../world/Physics";
+} from "@store/assetsSlice";
+import store from "@store/store";
+import { Physics } from "@world";
 import { Mesh } from "three";
 
 class AssetsLoader {
@@ -56,4 +56,4 @@ class AssetsLoader {
 }
 
 const assetsLoader = new AssetsLoader();
-export default assetsLoader;
+export { assetsLoader };

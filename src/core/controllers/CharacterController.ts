@@ -3,19 +3,20 @@ import {
   ALL_CHARACTER_CONTROL_KEYS,
   CHARACTER_SPEED,
   KEY_TO_ACTION_MAP,
-} from "../constants/character";
-import { FRICTION, GRAVITY } from "../constants/physics";
+} from "@constants/character";
+import { FRICTION, GRAVITY } from "@constants/physics";
 import type { GLTF } from "three/examples/jsm/Addons.js";
-import type { Physics } from "../world/Physics";
+import type { Physics } from "@world";
 import type {
   Collider,
   KinematicCharacterController,
 } from "@dimforge/rapier3d";
-import type IKeyboardListener from "../interfaces/IKeyboardListener";
-import type IUpdatable from "../interfaces/IUpdatable";
-import AnimationManager from "../managers/AnimationManager";
-import keyboardManager from "../managers/KeyboardManager";
-import renderingLoopManager from "../managers/RenderingLoopManager";
+import type { IKeyboardListener, IUpdatable } from "@interfaces";
+import {
+  AnimationManager,
+  keyboardManager,
+  renderingLoopManager,
+} from "@managers";
 
 interface MovementState {
   FORWARD: boolean;
@@ -30,9 +31,7 @@ const CAMERA_DISTANCE = 4;
 const CAMERA_HEIGHT = 0.5;
 const CAMERA_SMOOTHNESS = 0.1;
 
-export default class CharacterController
-  implements IKeyboardListener, IUpdatable
-{
+export class CharacterController implements IKeyboardListener, IUpdatable {
   private _movementState: MovementState = {
     FORWARD: false,
     BACKWARD: false,
