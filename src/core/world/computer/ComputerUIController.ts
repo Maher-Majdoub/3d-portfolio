@@ -40,6 +40,8 @@ export class ComputerUIController {
         comptuerMainView.appendChild(appDomElement);
       }
     });
+
+    fileManagerAppElement.click();
   }
 
   unmount() {

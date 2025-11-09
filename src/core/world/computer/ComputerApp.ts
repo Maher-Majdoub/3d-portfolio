@@ -1,4 +1,5 @@
 import appContainer from "./static/app-container.html?raw";
+import terminalAppHtml from "./static/terminal-app.html?raw";
 
 interface Point {
   x: number;
@@ -28,6 +29,7 @@ export class ComputerApp {
   private _dom = {
     root: null as HTMLElement | null,
     header: null as HTMLElement | null,
+    body: null as HTMLElement | null,
     container: null as HTMLElement | null,
     buttons: {
       toggleSize: null as HTMLElement | null,
@@ -38,17 +40,24 @@ export class ComputerApp {
   private _state: AppWindowState;
 
   constructor() {
+    const tempDiv = document.createElement("template");
+    tempDiv.innerHTML = terminalAppHtml;
+    const clone = tempDiv.content.cloneNode(true);
+
     const root = this._createRootElement();
 
     Object.assign(this._dom, {
       root,
       container: document.querySelector("#computer-main-view"),
+      body: root.querySelector("#app-body"),
       header: root.querySelector("#app-header"),
       buttons: {
         toggleSize: root.querySelector("#toggle-window-size-btn"),
         close: root.querySelector("#close-app-btn"),
       },
     });
+
+    this._dom.body?.appendChild(clone);
 
     this._state = {
       position: { x: 0, y: 0 },
@@ -64,7 +73,7 @@ export class ComputerApp {
       },
     };
 
-    this._resizeApp({ width: 200, height: 200 });
+    this._resizeApp({ width: 500, height: 500 });
     this._moveApp({ x: 20, y: 20 });
 
     this._dom.header?.addEventListener("mousedown", this._onMouseDown);
@@ -99,8 +108,9 @@ export class ComputerApp {
 
     Object.assign(this._dom, {
       root: null,
-      container: null,
       header: null,
+      body: null,
+      container: null,
       buttons: { toggleSize: null, close: null },
     });
   };
