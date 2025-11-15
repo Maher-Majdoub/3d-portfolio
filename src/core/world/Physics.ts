@@ -22,10 +22,7 @@ export class Physics implements IUpdatable {
   }
 
   add(mesh: Mesh, type: "fixed" | "dynamic") {
-    const position = mesh.getWorldPosition(new Vector3());
-    const rotation = mesh.getWorldQuaternion(new Quaternion());
-
-    const { rigidBody } = this.createCollider(mesh, position, rotation, type);
+    const { rigidBody } = this.createCollider(mesh, type);
 
     if (!rigidBody) throw new Error("Mesh should have a rigid body");
 
@@ -34,22 +31,24 @@ export class Physics implements IUpdatable {
     }
   }
 
-  createCollider(
-    mesh: Mesh,
-    initialPosition: Vector3,
-    initialRotation: Quaternion,
-    rigidBodyType?: "fixed" | "dynamic"
-  ) {
-    const dimentions = new Vector3();
-    mesh.geometry.computeBoundingBox();
-    mesh.geometry.boundingBox!.getSize(dimentions);
+  createCollider(mesh: Mesh, rigidBodyType?: "fixed" | "dynamic") {
+    mesh.updateMatrixWorld(true);
 
-    dimentions.multiply(mesh.getWorldScale(new Vector3()));
+    const worldPos = new Vector3();
+    const worldQuat = new Quaternion();
+    const worldScale = new Vector3();
+    mesh.matrixWorld.decompose(worldPos, worldQuat, worldScale);
+
+    const size = new Vector3();
+    mesh.geometry.computeBoundingBox();
+    mesh.geometry.boundingBox!.getSize(size);
+
+    size.multiply(worldScale);
 
     const colliderDesc = this._rapier.ColliderDesc.cuboid(
-      dimentions.x / 2,
-      dimentions.y / 2,
-      dimentions.z / 2
+      size.x / 2,
+      size.y / 2,
+      size.z / 2
     );
 
     let rigidBody;
@@ -62,15 +61,15 @@ export class Physics implements IUpdatable {
       else rigidBodyDesc = this._rapier.RigidBodyDesc.dynamic();
 
       rigidBody = this._world.createRigidBody(rigidBodyDesc);
-      rigidBody.setTranslation(initialPosition, true);
-      rigidBody.setRotation(initialRotation, true);
+      rigidBody.setTranslation(worldPos, true);
+      rigidBody.setRotation(worldQuat, true);
     }
 
     const collider = this._world.createCollider(colliderDesc, rigidBody);
 
     if (!rigidBody) {
-      collider.setTranslation(initialPosition);
-      collider.setRotation(initialRotation);
+      collider.setTranslation(worldPos);
+      collider.setRotation(worldQuat);
     }
 
     return { collider, rigidBody };

@@ -65,11 +65,7 @@ export class CharacterController implements IKeyboardListener, IUpdatable {
   constructor(physics: Physics, mesh: Mesh, avatar: GLTF, camera: Camera) {
     this._camera = camera;
 
-    const { collider } = physics.createCollider(
-      mesh,
-      mesh.getWorldPosition(new Vector3()),
-      mesh.getWorldQuaternion(new Quaternion())
-    );
+    const { collider } = physics.createCollider(mesh);
 
     this._mesh = mesh;
     this._collider = collider;
@@ -120,6 +116,13 @@ export class CharacterController implements IKeyboardListener, IUpdatable {
     const isMoving = len > 0.0001;
     if (isMoving && isGrounded) this._applyRotationInfluence(delta);
 
+    this._controller.computeColliderMovement(
+      this._collider,
+      this._frameMovement
+    );
+
+    this._frameMovement.copy(this._controller.computedMovement());
+
     this._moveCharacter();
 
     let animation = !isMoving
@@ -151,13 +154,6 @@ export class CharacterController implements IKeyboardListener, IUpdatable {
       .copy(this._inputDirection)
       .multiply(this._velocity)
       .multiplyScalar(delta);
-
-    this._controller.computeColliderMovement(
-      this._collider,
-      this._frameMovement
-    );
-
-    this._frameMovement.copy(this._controller.computedMovement());
   }
 
   private _updateVelocity(delta: number, isGrounded: boolean) {
